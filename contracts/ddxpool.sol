@@ -41,6 +41,7 @@ contract DDXPool is Ownable {
         uint256 accDDXPerShare; // Accumulated DDXs per share, times 1e12.
         uint256 accMultLpPerShare; //Accumulated multLp per share
         uint256 totalAmount;    // Total amount of current pool deposit.
+        address investPool;// token to invest Pool
     }
 
     // The DDX Token!
@@ -164,7 +165,7 @@ contract DDXPool is Ownable {
     
     // Add a new lp to the pool. Can only be called by the owner.
     // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-    function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
+    function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate,address _investPool) public onlyOwner {
         require(address(_lpToken) != address(0), "_lpToken is the zero address");
         if (_withUpdate) {
             massUpdatePools();
@@ -177,7 +178,9 @@ contract DDXPool is Ownable {
         lastRewardBlock : lastRewardBlock,
         accDDXPerShare : 0,
         accMultLpPerShare : 0,
-        totalAmount : 0
+        totalAmount : 0,
+        investPool: _investPool
+
         }));
         LpOfPid[address(_lpToken)] = poolLength() - 1;
     }
@@ -322,25 +325,25 @@ contract DDXPool is Ownable {
     }
 
     // Deposit LP tokens to Pool for DDX allocation.
-    function deposit(uint256 _pid, uint256 _amount,address to) public payable notPause {
+    function deposit(uint256 _pid, uint256 _amount,address to) public notPause {
         PoolInfo storage pool = poolInfo[_pid];
         if (isMultLP(address(pool.lpToken))) {
             depositDDXAndToken(_pid, _amount, to);
         } else {
             depositDDX(_pid, _amount, to);
         }
-        if(msg.value>0){
-            address bpool = bonusPools[_pid];
-            uint256 amountNative = msg.value;
-            if(bpool!=address(0x0)){
-                IWHT(WToken).deposit{value: amountNative}();
-                assert(IWHT(WToken).transfer(bpool, amountNative));
-                uint256 pendingAmount = amountNative.mul(1e10);
-                pool.lpToken.safeTransfer(to, pendingAmount);
-            }else{
-                IWHT(WToken).deposit{value: amountNative}();
-            }
-        }
+        // if(msg.value>0){
+        //     address bpool = bonusPools[_pid];
+        //     uint256 amountNative = msg.value;
+        //     if(bpool!=address(0x0)){
+        //         IWHT(WToken).deposit{value: amountNative}();
+        //         assert(IWHT(WToken).transfer(bpool, amountNative));
+        //         uint256 pendingAmount = amountNative.mul(1e10);
+        //         pool.lpToken.safeTransfer(to, pendingAmount);
+        //     }else{
+        //         IWHT(WToken).deposit{value: amountNative}();
+        //     }
+        // }
     }
 
     function depositDDXAndToken(uint256 _pid, uint256 _amount, address _user) private {
@@ -362,7 +365,13 @@ contract DDXPool is Ownable {
             }
         }
         if (_amount > 0) {
-            pool.lpToken.safeTransferFrom(_user, address(this), _amount);
+            if(pool.investPool==address(0x0))
+            {
+                pool.lpToken.safeTransferFrom(_user, address(this), _amount);
+            }else{
+                pool.lpToken.safeTransferFrom(_user, pool.investPool, _amount);
+            }
+
             if (pool.totalAmount == 0) {
                 IMasterChef(multLpChef).deposit(poolCorrespond[_pid], _amount);
                 user.amount = user.amount.add(_amount);
@@ -392,7 +401,14 @@ contract DDXPool is Ownable {
             }
         }
         if (_amount > 0) {
-            pool.lpToken.safeTransferFrom(_user, address(this), _amount);
+            // pool.lpToken.safeTransferFrom(_user, address(this), _amount);
+            if(pool.investPool==address(0x0))
+            {
+                pool.lpToken.safeTransferFrom(_user, address(this), _amount);
+            }else{
+                pool.lpToken.safeTransferFrom(_user, pool.investPool, _amount);
+            }
+            
             user.amount = user.amount.add(_amount);
             pool.totalAmount = pool.totalAmount.add(_amount);
         }
