@@ -26,7 +26,7 @@ async function main() {
  
   /** 准备 end */
   const UniswapV2Pair = await hre.ethers.getContractFactory("UniswapV2Pair");
-  
+  const ERC20Template = await hre.ethers.getContractFactory("ERC20Template");
   var pairs = ["0x1f27d8192175286a4883b66e7cdf3bf6ead183bb",
   "0x4b10fe613a1e135a1b2ccc767425c56136503819",
   "0x63826c7ef53f47b5d868b729d5df30b8c6e4285c",

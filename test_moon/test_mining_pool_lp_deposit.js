@@ -59,7 +59,7 @@ async function main() {
     let withdraw = await ddxpool.withdraw(pid, 0);
     console.log("withdraw reward:",withdraw);
   }
-  //设置抵押金额
+  // 设置抵押金额
   const amountDeposit = balancePair.div(2);
   console.log("amountDeposit:",amountDeposit.toString());
   //授权
@@ -74,10 +74,10 @@ async function main() {
 
   //查询抵押池子信息
   poolInfo = await ddxpool.poolInfo(pid);
-  console.log(pid," poolInfo",poolInfo);
+  console.log(pid," poolInfo",poolInfo.toString());
   //查询用户抵押信息
   userInfo = await ddxpool.userInfo(pid, accounts[0].address);
-  console.log("userInfo:",userInfo);
+  console.log("userInfo:",userInfo.toString());
   
   
   
