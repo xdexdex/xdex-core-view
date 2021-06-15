@@ -98,7 +98,6 @@ module.exports = {
       accounts,
       gasPrice: 1*1000000000,
       chainId: 128,
-      accounts:["6c52a5194e970303dfd3452a136bcf27879de7aea0421dfdd0cfa8da18191f47"],
       loggingEnabled: true,
       blockGasLimit:0x280de80,
       attachs:{
@@ -122,7 +121,8 @@ module.exports = {
            oracle: "0xb47416FfdC9cfD0E527281e808f680798deeA5bf",
            startblock: "5558407",
            swapmining: "0x785Effd455700596ec9Df58C3b0193e99DABC9BA",
-           ddxpool: "0x2d4856154844e8aD67570D5EE148612f279D53bC",
+           ddxpool: "0xC5Be318a1255EE3B5968747f61Bf51e536FAfead",
+           bonuspool: "0x14E239267C809Ca8C8F27B198aD4BdE2E3CCD2ab",
            paramfeecalctor: "0x2908a1242D479d6EB994258E487464356A671c3c",
         }
     },
@@ -175,7 +175,8 @@ module.exports = {
         oracle: "0xe3e4631D734e4b3F900AfcC396440641Ed0df339",
         startblock:"672323",
         swapmining: "0xDf795df2e0ad240a82d773DA01a812B96345F9C5",
-        ddxpool: "0x2550d6424b46f78F4E31F1CCf88Da26dda7826C6",
+        ddxpool: "0xeCb1b23888158559754c1c90037a07cD1F98b6A2",
+        bonuspool:"0x17dA40e699969d0Fd36551E5a029f5bE01b760B9",
         paramfeecalctor: "0x121f7e412A536D673DaB310F1448ce0e3843068a",
         repurchase: "0x06d649F55a82738A7B0ECa43be3ACEFbD9956880",
         airdrop: "0x279947e1a7748Af67Ed416f963d7e0f88071Cf98",

@@ -309,7 +309,8 @@ contract DDXPool is Ownable {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
         uint256 accDDXPerShare = pool.accDDXPerShare;
-        uint256 lpSupply = pool.lpToken.balanceOf(address(this));
+        // uint256 lpSupply = pool.lpToken.balanceOf(address(this));
+        uint256 lpSupply = pool.totalAmount;
         if (user.amount > 0) {
             if (block.number > pool.lastRewardBlock) {
                 uint256 blockReward = getDDXBlockReward(pool.lastRewardBlock);
