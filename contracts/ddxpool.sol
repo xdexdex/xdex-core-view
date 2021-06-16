@@ -253,7 +253,8 @@ contract DDXPool is Ownable {
             }
             lpSupply = pool.totalAmount;
         } else {
-            lpSupply = pool.lpToken.balanceOf(address(this));
+            // lpSupply = pool.lpToken.balanceOf(address(this));
+            lpSupply = pool.totalAmount;
             if (lpSupply == 0) {
                 pool.lastRewardBlock = block.number;
                 return;
