@@ -59,7 +59,7 @@ contract References is Ownable,ReentrancyGuard,IReferences{
     IDDX public ddx;
 
     address  public  sweeper;
-
+    uint256 public rewardBase = 10000;
 
     constructor(
         IDDX _ddx,
@@ -72,6 +72,10 @@ contract References is Ownable,ReentrancyGuard,IReferences{
     }
     function setSweeper(address _sweeper) public onlyOwner{
         sweeper = _sweeper;
+    }
+
+    function setRewardBase(uint256 _rewardBase) public onlyOwner{
+        rewardBase = _rewardBase;
     }
 
     function addCaller(address _addCaller) public onlyOwner returns (bool) {
@@ -168,8 +172,7 @@ contract References is Ownable,ReentrancyGuard,IReferences{
             upperRatio = upperRatio.add(rewardFeeRatio[i]);
             user = upperUser.upper;
         }
-
-        return (amount.mul(upperRatio).div(100),amount);
+        return (amount.mul(upperRatio).div(rewardBase),amount);
     }
     function rewardUpper(address ref,address token,uint256 upperFeeReal,uint256 amount,address _sweeper) public override onlyCaller nonReentrant returns (uint256) {
         UserInfo storage user = userInfo[ref];
@@ -192,7 +195,7 @@ contract References is Ownable,ReentrancyGuard,IReferences{
     }
 
     function rewardLayers(address ref,address token,uint256 amount,uint256 layer) internal returns (uint256 rewardAmount,uint256 rewardDept) {
-        rewardAmount = amount.mul(rewardFeeRatio[layer]).div(100);
+        rewardAmount = amount.mul(rewardFeeRatio[layer]).div(rewardBase);
         if(rewardAmount>0){
             UserInfo storage user = userInfo[ref];
             user.rewardAmount[token] = user.rewardAmount[token].add(rewardAmount);
@@ -212,7 +215,6 @@ contract References is Ownable,ReentrancyGuard,IReferences{
                 rewardDept = rewardDept.add(rewardDept);
             }
         }
-
     }
 
     function pendingWithdraw(address user,address token) public view returns(uint256){
@@ -252,7 +254,6 @@ contract References is Ownable,ReentrancyGuard,IReferences{
             _amount = _amount.sub(lock);
         }
         ddx.transfer(_to, _amount);
-       
     }
 
 

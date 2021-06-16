@@ -15,7 +15,6 @@ import './uniswapv2/interfaces/IWHT.sol';
 import  './uniswapv2/libraries/TransferHelper.sol';
 import './uniswapv2/interfaces/IUniswapV2Factory.sol';
 
-
 contract DDXPool is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -46,8 +45,11 @@ contract DDXPool is Ownable {
 
     // The DDX Token!
     IDDX public ddx;
-    // DDX tokens created per block.
-    uint256 public ddxPerBlock;
+
+    uint public ddxPerBlockInitLength;
+    mapping(uint256=>uint256) public ddxPerBlockInit;
+
+    uint256 public blockRewardTotal;
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
@@ -78,7 +80,7 @@ contract DDXPool is Ownable {
 
     constructor(
         IDDX _ddx,
-        uint256 _ddxPerBlock, //110
+        uint256 _blockRewardTotal, //110
         uint256 _startBlock,
         uint256 _halvingPeriod,  //1576800,
         address _WToken,
@@ -86,7 +88,7 @@ contract DDXPool is Ownable {
         address _tokenLock
     ) public {
         ddx = _ddx;
-        ddxPerBlock = _ddxPerBlock;
+        blockRewardTotal = _blockRewardTotal;
         startBlock = _startBlock;
         halvingPeriod = _halvingPeriod;
         WToken = _WToken;
@@ -104,15 +106,22 @@ contract DDXPool is Ownable {
     }
 
 
+    function setBlockRewardTotal(uint256 _blockRewardTotal) public onlyOwner {
+        blockRewardTotal = _blockRewardTotal;
+    }
+
     function setHalvedPeroid(uint256 _halvingPeriod) public onlyOwner {
         halvingPeriod = _halvingPeriod;
     }
 
 
     // Set the number of ddx produced by each block
-    function setDDXPerBlock(uint256 _newPerBlock) public onlyOwner {
+    function setDDXPerBlockInit(uint256 []memory _ddxPerBlockInit) public onlyOwner {
         massUpdatePools();
-        ddxPerBlock = _newPerBlock;
+        ddxPerBlockInitLength = _ddxPerBlockInit.length;
+        for(uint i=0;i<ddxPerBlockInitLength;i++){
+            ddxPerBlockInit[i] = _ddxPerBlockInit[i];
+        }
     }
 
     function poolLength() public view returns (uint256) {
@@ -210,9 +219,17 @@ contract DDXPool is Ownable {
         return 0;
     }
 
-    function reward(uint256 blockNumber) public view returns (uint256) {
+    function reward(uint256 blockNumber) public view returns (uint256 ddxPerBlockCal) {
         uint256 _phase = phase(blockNumber);
-        return ddxPerBlock.div(2 ** _phase);
+        ddxPerBlockCal = 0;
+        if(_phase < ddxPerBlockInitLength) {
+            ddxPerBlockCal = ddxPerBlockInit[_phase];
+        } else {
+            ddxPerBlockCal = ddxPerBlockInit[ddxPerBlockInitLength-1];
+            for(uint i=ddxPerBlockInitLength;i<=_phase;i++) {    
+                ddxPerBlockCal = ddxPerBlockCal.mul(99).div(100);
+            }
+        }
     }
 
 
@@ -227,6 +244,9 @@ contract DDXPool is Ownable {
             _lastRewardBlock = r;
         }
         blockReward = blockReward.add((block.number.sub(_lastRewardBlock)).mul(reward(block.number)));
+        if(blockReward > blockRewardTotal) {
+            blockReward = blockRewardTotal;
+        }
         return blockReward;
 
     }
