@@ -88,19 +88,6 @@ contract SwapMining is Ownable {
         uint256 quantity
     );
 
-    event ShareToSuper(
-        address pair,
-        address user,
-        address superUser,
-        uint256 shareAmount,
-        uint256 quantity 
-    );
-
-    event ReferenceUpdate(
-        address user,
-        address lastReference,
-        address changeReference
-    );
     event TakerWithdraw(  
         address pair,
         address to,
