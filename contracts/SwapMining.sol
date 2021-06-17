@@ -339,8 +339,9 @@ contract SwapMining is Ownable {
             PoolInfo storage pool = poolInfo[pid];
             UserInfo storage user = userInfo[pid][account];
             if (user.quantity > 0) {
-                uint256 userReward = pool.allocDDXAmount.mul(user.quantity).div(pool.quantity);
-                userSub = userSub.add(userReward);
+                uint256 blockReward = getDDXReward(pool.lastRewardBlock);
+                uint256 ddxReward = blockReward.mul(pool.allocPoint).div(totalAllocPoint);
+                userSub = userSub.add((pool.allocDDXAmount.add(ddxReward)).mul(user.quantity).div(pool.quantity));
             }
         }
         return userSub;
