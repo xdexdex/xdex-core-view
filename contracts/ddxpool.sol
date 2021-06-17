@@ -49,7 +49,6 @@ contract DDXPool is Ownable {
     uint public ddxPerBlockInitLength;
     mapping(uint256=>uint256) public ddxPerBlockInit;
 
-    uint256 public blockRewardTotal;
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
@@ -80,7 +79,6 @@ contract DDXPool is Ownable {
 
     constructor(
         IDDX _ddx,
-        uint256 _blockRewardTotal, //110
         uint256 _startBlock,
         uint256 _halvingPeriod,  //1576800,
         address _WToken,
@@ -88,7 +86,6 @@ contract DDXPool is Ownable {
         address _tokenLock
     ) public {
         ddx = _ddx;
-        blockRewardTotal = _blockRewardTotal;
         startBlock = _startBlock;
         halvingPeriod = _halvingPeriod;
         WToken = _WToken;
@@ -103,11 +100,6 @@ contract DDXPool is Ownable {
 
     function setBonusPool(uint256 pid,address bonusAddress) public onlyOwner{
         bonusPools[pid] = bonusAddress;
-    }
-
-
-    function setBlockRewardTotal(uint256 _blockRewardTotal) public onlyOwner {
-        blockRewardTotal = _blockRewardTotal;
     }
 
     function setHalvedPeroid(uint256 _halvingPeriod) public onlyOwner {
@@ -244,9 +236,6 @@ contract DDXPool is Ownable {
             _lastRewardBlock = r;
         }
         blockReward = blockReward.add((block.number.sub(_lastRewardBlock)).mul(reward(block.number)));
-        if(blockReward > blockRewardTotal) {
-            blockReward = blockRewardTotal;
-        }
         return blockReward;
 
     }

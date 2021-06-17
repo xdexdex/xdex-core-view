@@ -30,11 +30,11 @@ async function main() {
   //HBTC HRC20HUSD DDXToken
   const ERC20Template = await hre.ethers.getContractFactory("ERC20Template");
 
-  const hbtc = await ERC20Template.attach(attach.bch);
+  const hbtc = await ERC20Template.attach(attach.usdt);
   console.log("hbtc attached to:", hbtc.address);
   //HUSD
   const HUSD = await hre.ethers.getContractFactory("ERC20Template");
-  const husd = await HUSD.attach(attach.usdt);
+  const husd = await HUSD.attach(attach.bch);
   console.log("HUSD attached to:", husd.address);
   /** 准备 end */
 
@@ -45,7 +45,7 @@ async function main() {
   console.log("HBTC balance :", htcbalance.toString());
   
   //输入HBTC扣除数量
-  const aount = "100000";
+  const aount = "1";
   let amountInhbtc = ethers.utils.parseUnits(aount,await hbtc.decimals());
   let amountOutHusd = ethers.utils.parseUnits(aount,await husd.decimals());
   //计算HUSD到账数量：getAmountsOut(amountIn,[in地址,out地址])

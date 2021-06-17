@@ -42,6 +42,8 @@ contract SwapMining is Ownable {
     // pair corresponding pid
     mapping(address => uint256) public pairOfPid;
 
+    uint public ddxPerBlockInitLength;
+    mapping(uint256=>uint256) public ddxPerBlockInit;
     // pair corresponding pid
     // mapping(address => address) public references;
 
@@ -148,9 +150,12 @@ contract SwapMining is Ownable {
 
 
     // Set the number of ddx produced by each block
-    function setDDXPerBlock(uint256 _newPerBlock) public onlyOwner {
-        massMintPools();
-        ddxPerBlock = _newPerBlock;
+   function setDDXPerBlockInit(uint256 []memory _ddxPerBlockInit) public onlyOwner {
+        massUpdatePools();
+        ddxPerBlockInitLength = _ddxPerBlockInit.length;
+        for(uint i=0;i<ddxPerBlockInitLength;i++){
+            ddxPerBlockInit[i] = _ddxPerBlockInit[i];
+        }
     }
 
     // Only tokens in the whitelist can be mined MDX
@@ -206,9 +211,17 @@ contract SwapMining is Ownable {
         return phase(block.number);
     }
 
-    function reward(uint256 blockNumber) public view returns (uint256) {
+    function reward(uint256 blockNumber) public view returns (uint256 ddxPerBlockCal) {
         uint256 _phase = phase(blockNumber);
-        return ddxPerBlock.div(2 ** _phase);
+        ddxPerBlockCal = 0;
+        if(_phase < ddxPerBlockInitLength) {
+            ddxPerBlockCal = ddxPerBlockInit[_phase];
+        } else {
+            ddxPerBlockCal = ddxPerBlockInit[ddxPerBlockInitLength-1];
+            for(uint i=ddxPerBlockInitLength;i<=_phase;i++) {    
+                ddxPerBlockCal = ddxPerBlockCal.mul(99).div(100);
+            }
+        }
     }
 
     function reward() public view returns (uint256) {
