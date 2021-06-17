@@ -21,9 +21,6 @@ contract SwapMining is Ownable {
 
     //lock half 
     address public tokenLock;
-
-    // DDX tokens created per block
-    uint256 public ddxPerBlock;
     // The block number when DDX mining starts.
     uint256 public startBlock;
     // How many blocks are halved
@@ -53,7 +50,6 @@ contract SwapMining is Ownable {
         IOracle _oracle,
         address _router,
         address _targetToken,
-        uint256 _ddxPerBlock,
         uint256 _startBlock,
         address _tokenLock
     ) public {
@@ -62,7 +58,6 @@ contract SwapMining is Ownable {
         oracle = _oracle;
         router = _router;
         targetToken = _targetToken;
-        ddxPerBlock = _ddxPerBlock;
         startBlock = _startBlock;
         tokenLock = _tokenLock;
     }
