@@ -151,7 +151,7 @@ contract SwapMining is Ownable {
 
     // Set the number of ddx produced by each block
    function setDDXPerBlockInit(uint256 []memory _ddxPerBlockInit) public onlyOwner {
-        massUpdatePools();
+        massMintPools();
         ddxPerBlockInitLength = _ddxPerBlockInit.length;
         for(uint i=0;i<ddxPerBlockInitLength;i++){
             ddxPerBlockInit[i] = _ddxPerBlockInit[i];
