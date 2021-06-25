@@ -55,7 +55,6 @@ contract DDXPool is Ownable {
     mapping(uint256 => mapping(address => UserInfo)) public userInfo;
     // Corresponding to the pid of the multLP pool
     mapping(uint256 => uint256) public poolCorrespond;
-    mapping(uint256 => address) public bonusPools;
     // pid corresponding address
     mapping(address => uint256) public LpOfPid;
     // Control mining
@@ -99,7 +98,8 @@ contract DDXPool is Ownable {
     }
 
     function setBonusPool(uint256 pid,address bonusAddress) public onlyOwner{
-        bonusPools[pid] = bonusAddress;
+        PoolInfo storage pool = poolInfo[pid];
+        pool.investPool = bonusAddress;
     }
 
     function setHalvedPeroid(uint256 _halvingPeriod) public onlyOwner {
