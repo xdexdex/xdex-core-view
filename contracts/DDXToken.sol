@@ -11,8 +11,8 @@ import './interface/IFeeCollector.sol';
 
 
 contract DDXToken is DelegateERC20, Ownable,IDDX {
-    uint256 private constant preMineSupply =115000000 * 1e18; 
-    uint256 private constant maxSupply =    500000000 * 1e18;     // the total supply
+    uint256 private constant preMineSupply = 57500000 * 1e18; 
+    uint256 private constant maxSupply =    250000000 * 1e18;     // the total supply
 
     using EnumerableSet for EnumerableSet.AddressSet;
     EnumerableSet.AddressSet private _feeWhiteList;

@@ -16,11 +16,11 @@ contract Repurchase is Ownable {
     using EnumerableSet for EnumerableSet.AddressSet;
     EnumerableSet.AddressSet private _caller;
 
-    address public constant USDT = 0x2D6E6A6430F0121d6949D743DF54730b40C5c74F;
-    address public constant DDX = 0xbaee9B65349929Bd78f9878555bF78027Df7f101;
-    address public constant DDX_USDT = 0x7461714666Ee7f2eF82c04a58D2C8C16cA0e6D8f;
-    address public constant blackHoleAddress = 0x456D9eFa4f8039De66C8fD4a6d22953D33C6977d;
-    address public constant DAOAddress = 0x0Ef67c16904Af312796560dF80E60581C43C4e24;
+    address public constant USDT = 0xa71EdC38d189767582C38A3145b5873052c3e47a;
+    address public constant DDX = 0x03654d22fB47e1806Fd92959dA0c8c187965feEE;
+    address public constant DDX_USDT = 0x60889f526538d1246Fb750411C1b2E255d56e67E;
+    address public constant blackHoleAddress = 0xbB597524cd334ecE51fd6C5Bff0889aF10AE3eB0;
+    address public daoAddress = 0xc378d897bE9395Fbeac9D5e8761eFCD09c049eB0;
     address public emergencyAddress;
     uint256 public amountIn;
     event RepurchaseSwap(uint256 amountHalf,uint256 amountHole,uint256 amountDao);
@@ -34,6 +34,10 @@ contract Repurchase is Ownable {
 
     function setAmountIn(uint256 _newIn) public onlyOwner {
         amountIn = _newIn;
+    }
+
+    function setDaoAddress(address _daoAddress) public onlyOwner {
+        daoAddress = _daoAddress;
     }
 
     function setEmergencyAddress(address _newAddress) public onlyOwner {
@@ -94,7 +98,7 @@ contract Repurchase is Ownable {
             uint256 amountInWithFee = amountHalf.mul(9975);
             amountOut = amountHalf.mul(9975).mul(reserve1) / reserve0.mul(10000).add(amountInWithFee);
             IERC20(USDT).safeTransfer(DDX_USDT, amountHalf);
-            IUniswapV2Pair(DDX_USDT).swap(0, amountOut, DAOAddress, new bytes(0));
+            IUniswapV2Pair(DDX_USDT).swap(0, amountOut, daoAddress, new bytes(0));
     
         }
         emit RepurchaseSwap(amountHalf,amountHole,amountOut);
