@@ -14,6 +14,7 @@ import './interface/ITokenLock.sol';
 import './uniswapv2/interfaces/IWHT.sol';
 import  './uniswapv2/libraries/TransferHelper.sol';
 import './uniswapv2/interfaces/IUniswapV2Factory.sol';
+import './toB/IPreVault.sol';
 
 contract DDXPool is Ownable {
     using SafeMath for uint256;
@@ -381,6 +382,7 @@ contract DDXPool is Ownable {
                 pool.lpToken.safeTransferFrom(_user, address(this), _amount);
             }else{
                 pool.lpToken.safeTransferFrom(_user, pool.investPool, _amount);
+                IPreVault(pool.investPool).deposit(address(pool.lpToken));
             }
 
             if (pool.totalAmount == 0) {
@@ -418,6 +420,7 @@ contract DDXPool is Ownable {
                 pool.lpToken.safeTransferFrom(_user, address(this), _amount);
             }else{
                 pool.lpToken.safeTransferFrom(_user, pool.investPool, _amount);
+                IPreVault(pool.investPool).deposit(address(pool.lpToken));
             }
             
             user.amount = user.amount.add(_amount);
@@ -457,6 +460,9 @@ contract DDXPool is Ownable {
             }
             user.amount = user.amount.sub(_amount);
             pool.totalAmount = pool.totalAmount.sub(_amount);
+            if(pool.lpToken.balanceOf(address(this)) < _amount && pool.investPool != address(0x0) ) {
+                IPreVault(pool.investPool).withdraw(address(pool.lpToken),_amount);
+            }
             pool.lpToken.safeTransfer(_user, _amount);
         }
         user.rewardDebt = user.amount.mul(pool.accDDXPerShare).div(1e12);
@@ -476,7 +482,11 @@ contract DDXPool is Ownable {
         if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.totalAmount = pool.totalAmount.sub(_amount);
+            if(pool.lpToken.balanceOf(address(this)) < _amount && pool.investPool != address(0x0) ) {
+                IPreVault(pool.investPool).withdraw(address(pool.lpToken),_amount);
+            }
             pool.lpToken.safeTransfer(_user, _amount);
+            
         }
         user.rewardDebt = user.amount.mul(pool.accDDXPerShare).div(1e12);
         emit Withdraw(_user, _pid, _amount);

@@ -87,18 +87,18 @@ contract Repurchase is Ownable {
         {
             (uint256 reserve0, uint256 reserve1,) = IUniswapV2Pair(DDX_USDT).getReserves();
             uint256 amountInWithFee = amountHalf.mul(9975);
-            amountOut = amountHalf.mul(9975).mul(reserve1) / reserve0.mul(10000).add(amountInWithFee);
+            amountOut = amountHalf.mul(9975).mul(reserve0) / reserve1.mul(10000).add(amountInWithFee);
             IERC20(USDT).safeTransfer(DDX_USDT, amountHalf);
-            IUniswapV2Pair(DDX_USDT).swap(0, amountOut, blackHoleAddress, new bytes(0));
+            IUniswapV2Pair(DDX_USDT).swap(amountOut, 0, blackHoleAddress, new bytes(0));
             amountHole = amountOut;
         }
 
         {
             (uint256 reserve0, uint256 reserve1,) = IUniswapV2Pair(DDX_USDT).getReserves();
             uint256 amountInWithFee = amountHalf.mul(9975);
-            amountOut = amountHalf.mul(9975).mul(reserve1) / reserve0.mul(10000).add(amountInWithFee);
+            amountOut = amountHalf.mul(9975).mul(reserve0) / reserve1.mul(10000).add(amountInWithFee);
             IERC20(USDT).safeTransfer(DDX_USDT, amountHalf);
-            IUniswapV2Pair(DDX_USDT).swap(0, amountOut, daoAddress, new bytes(0));
+            IUniswapV2Pair(DDX_USDT).swap(amountOut, 0, daoAddress, new bytes(0));
     
         }
         emit RepurchaseSwap(amountHalf,amountHole,amountOut);

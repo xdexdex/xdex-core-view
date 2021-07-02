@@ -154,6 +154,17 @@ contract UniswapV2Factory is IUniswapV2Factory ,Ownable{
         }
     }
     
+    function feeParam(address pair) public view override returns (uint fee, uint feeBase) {
+        IFeeCalcutor calc = pairFeeCalculators[pair];
+        if(address(calc)!=address(0x0)){
+            (uint feeTotal,uint feeBase,,) = calc.pairFeeParams(pair);
+            if(feeTotal != 0){
+                return (feeBase.sub(feeTotal),feeBase);
+            } 
+        } 
+        return (25,10000);
+    }
+    
 
     // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
     function getAmountIn(address pair,uint amountOut, uint reserveIn, uint reserveOut)   public view override returns (uint amountIn) {

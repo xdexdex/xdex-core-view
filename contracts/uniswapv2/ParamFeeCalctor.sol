@@ -18,7 +18,7 @@ contract ParamFeeCalctor is IFeeCalcutor ,Ownable{
         uint256  repurchase;
     }
 
-    mapping(address => FeeParams) public pairFeeParams;
+    mapping(address => FeeParams) public override pairFeeParams;
     address public factory;
     constructor(address _factory) public {
         factory = _factory;

@@ -41,6 +41,8 @@ interface IUniswapV2Factory {
     function getAmountsOut(address pair, uint amountIn, address[] memory path)  external view returns (uint[] memory amounts) ;
     // performs chained getAmountIn calculations on any number of pairs
     function getAmountsIn(address pair, uint amountOut, address[] memory path)  external view returns (uint[] memory amounts);
+
+    function feeParam(address pair) external view returns (uint fee, uint feeBase);
 }
 interface IFeeCalcutor {
     function calcTotalFee(address pair,uint rootK,uint rootKLast,uint totalSupply) external view returns (uint256,uint256);
@@ -53,4 +55,6 @@ interface IFeeCalcutor {
     // performs chained getAmountIn calculations on any number of pairs
     function getAmountsIn(address pair, uint amountOut, address[] memory path)  external view returns (uint[] memory amounts);
 
+    function pairFeeParams(address pair) external view returns(uint256 feeTotal,uint256 feeBase,uint256 sita, uint256 repurchase);
+    
 }
