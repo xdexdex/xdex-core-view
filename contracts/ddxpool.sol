@@ -460,9 +460,10 @@ contract DDXPool is Ownable {
             }
             user.amount = user.amount.sub(_amount);
             pool.totalAmount = pool.totalAmount.sub(_amount);
-            if(pool.lpToken.balanceOf(address(this)) < _amount && pool.investPool != address(0x0) ) {
-                IPreVault(pool.investPool).withdraw(address(pool.lpToken),_amount);
-            }
+            uint256 lpBal = pool.lpToken.balanceOf(address(this)) ;
+            if(lpBal < _amount && pool.investPool != address(0x0) ) {
+                IPreVault(pool.investPool).withdraw(address(pool.lpToken),_amount.sub(lpBal));
+            }            
             pool.lpToken.safeTransfer(_user, _amount);
         }
         user.rewardDebt = user.amount.mul(pool.accDDXPerShare).div(1e12);
@@ -482,8 +483,9 @@ contract DDXPool is Ownable {
         if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.totalAmount = pool.totalAmount.sub(_amount);
-            if(pool.lpToken.balanceOf(address(this)) < _amount && pool.investPool != address(0x0) ) {
-                IPreVault(pool.investPool).withdraw(address(pool.lpToken),_amount);
+            uint256 lpBal = pool.lpToken.balanceOf(address(this)) ;
+            if(lpBal < _amount && pool.investPool != address(0x0) ) {
+                IPreVault(pool.investPool).withdraw(address(pool.lpToken),_amount.sub(lpBal));
             }
             pool.lpToken.safeTransfer(_user, _amount);
             
